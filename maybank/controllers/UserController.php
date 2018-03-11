@@ -87,6 +87,13 @@ class UserController extends Controller
                 $model->register();
                 Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
                 
+                //send email to user
+                Yii::$app->mailer->compose('email',['model'=>$model])
+                    ->setFrom('kahsengpooh@gmail.com')
+                    ->setTO($model->email)
+                    ->setSubject('Welcome to Maybank!')
+                    ->send();
+
                 $db->commit();
                 return $this->redirect(['signup']);
             }
