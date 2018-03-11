@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use mPDF;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -56,6 +57,18 @@ class UserController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    public function actionGenPdf($id)
+    {
+        $pdf_content = $this->render('view-pdf', [
+            'model' => $this->findModel($id),
+        ]);
+
+        $mpdf = new \Mpdf\Mpdf();
+        $mpdf->WriteHTML($pdf_content);
+        $mpdf->Output();
+        exit;
     }
 
     /**
