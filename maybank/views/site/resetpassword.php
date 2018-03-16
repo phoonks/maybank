@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <script>
     function generateCode() {
         $code = rand(10000,99999);
-        Yii::app()->cache->set('code', $code, 120);
+        \Yii::$app->cache->set('code', $code, 120);
         sleep(130);
     }
 </script>
@@ -26,15 +26,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
+            <?php $form = ActiveForm::begin(['id' => 'reset-password-form'],
+                'options' => ['onsubmit' => 'return false']); ?>
+                
                 <?= $form->field($model, 'password')->passwordInput() ?>
                 <?= $form->field($model, 'confirm')->passwordInput() ?>
                 <?= $form->field($model, 'securitycode')->passwordInput() ?>
                 <div class="form-group">
-                    <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+                    <?= Html::submitButton('Save', ['name' => 'submit', 'class' => 'btn btn-primary', 'value' => 'Save']) ?>
                 </div>
                 <div class="form-group">
-                    <?= Html::submitButton('Request Code', ['class' => 'btn btn-primary', 'onclick' => 'generateCode()']) ?>
+                    <?= Html::submitButton('Request Code', ['name' => 'submit', 'class' => 'btn btn-primary', 'value' => 'generateCode']) ?>
                 </div>
             <?php ActiveForm::end(); ?>
         </div>

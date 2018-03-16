@@ -142,7 +142,6 @@ use yii\widgets\ActiveForm;
             _("multiphase").submit();
         }
     </script>
-</head>
 <body>
     <div class="progress">
         <div id="progressBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>

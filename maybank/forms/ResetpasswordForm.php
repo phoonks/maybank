@@ -26,8 +26,8 @@ class ResetpasswordForm extends Model
     public function reset($id)
     {
         try {
-            $code = Yii::app()->cache->get('code');
-            if ($data === false) {
+            $code = Yii::$app->cache->get('code');
+            if ($code === false) {
                 throw new \Exception('Data is expired');
             }
             $user = User::findOne($id);

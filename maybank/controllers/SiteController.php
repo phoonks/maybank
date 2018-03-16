@@ -85,7 +85,7 @@ class SiteController extends Controller
                 //     ->setTo($user->email)
                 //     ->setSubject('This is the validate code!')
                 //     ->send();
-                Yii::app()->cache->set('resetpassword', $user->id);
+                Yii::$app->cache->set('resetpassword', $user->id);
                 return $this->redirect(['resetpassword']);
             }
         }catch(\Exception $e) {
@@ -99,11 +99,15 @@ class SiteController extends Controller
 
     public function actionResetpassword()
     {
-        $id = Yii::app()->cache->get('resetpassword');
+        $id = Yii::$app->cache->get('resetpassword');
         $db = Yii::$app->db->beginTransaction();
         $model = new ResetpasswordForm();
         try {
             if ($model->load(Yii::$app->request->post())) {
+                switch (\Yii::$app->request->post()) {
+                    case '':
+                    case '':
+                }
                 $wrong = $model->reset($id);
                 if($wrong === false) {
                     Yii::$app->getSession()->setFlash('danger', 'Wrong Sucurity Code, Please try again!!');    
