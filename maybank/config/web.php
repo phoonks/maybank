@@ -51,6 +51,11 @@ $config = [
             ],
         ],
         'db' => $db,
+
+        'mandrill' => [
+            'class' => 'nickcv\mandrill\Mailer',
+            'apikey' => 'ca8273bf19e91013cce7364ea90da88b-us12',
+        ],
         
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -58,7 +63,6 @@ $config = [
             'rules' => [
             ],
         ],
-        
     ],
     'params' => $params,
 ];

@@ -1,13 +1,13 @@
-<!-- ?php
+<?php
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = 'Welcome Maybank2u';
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Congratulations!</h1>
+        <h1>Welcome to Maybank2U!</h1>
 
         <p class="lead">You have successfully created your Yii-powered application.</p>
 
@@ -50,8 +50,8 @@ $this->title = 'My Yii Application';
         </div>
 
     </div>
-</div> -->
-<!DOCTYPE html>
+</div>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -146,4 +146,4 @@ $this->title = 'My Yii Application';
         </div>
     </form>
 </body>
-</html>
+</html> -->

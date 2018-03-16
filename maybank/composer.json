@@ -18,7 +18,11 @@
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
-        "mpdf/mpdf": "^7.0"
+        "mpdf/mpdf": "^7.0",
+        "nickcv/yii2-mandrill": "*",
+        "albertborsos/yii2-clickatell": "0.4.*",
+        "abhi1693/yii2-sms": "2.0.0",
+        "yiisoft/yii2-httpclient": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

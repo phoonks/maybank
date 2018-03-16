@@ -29,7 +29,8 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        //'brandLabel' => Yii::$app->name,
+        'brandLabel' => 'Maybank',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -41,15 +42,18 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
-            ['label' => 'Text', 'url' => ['/user/signup']],
-            ['label' => 'View', 'url' => ['/user/index']],
+            ['label' => 'Sign Up', 'url' => ['/user/save']],
+            ['label' => 'Manage Account', 'visible' =>!Yii::$app->user->isGuest, 'items' => [
+                ['label' => 'View', 'url' => ['/account/index']],
+                ['label' => 'Transaction History', 'url' => ['/transaction/index']],
+            ]],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    'Logout (' . Yii::$app->user->identity->user_name . ')',
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()
@@ -71,7 +75,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Maybank <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
