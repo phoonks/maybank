@@ -23,7 +23,7 @@ class m180307_073001_create_user_table extends Migration
             'country_code' => $this->string(),
             'phone_no' => $this->string(),
             'email' => $this->string(),
-            'date_of_birth' => $this->dateTime(),
+            'date_of_birth' => $this->datetime(),
             'position' => $this->string(),
             'address' => $this->string(),
             'country' => $this->string(),

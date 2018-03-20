@@ -20,6 +20,6 @@ class m180314_050239_create_xxx_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('user', 'account_type');
+        $this->dropColumn('user', 'account_type');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 
 /**
  * @var yii\web\View $this
@@ -11,14 +11,6 @@ $this->title = 'Reset password';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<script>
-    function generateCode() {
-        $code = rand(10000,99999);
-        \Yii::$app->cache->set('code', $code, 120);
-        sleep(130);
-    }
-</script>
-
 <div class="site-reset-password">
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -26,19 +18,28 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'reset-password-form'],
-                'options' => ['onsubmit' => 'return false']); ?>
+            <?php $form = ActiveForm::begin([
+                // 'layout' => 'horizontal'
+                ]); ?>
                 
-                <?= $form->field($model, 'password')->passwordInput() ?>
-                <?= $form->field($model, 'confirm')->passwordInput() ?>
-                <?= $form->field($model, 'securitycode')->passwordInput() ?>
-                <div class="form-group">
-                    <?= Html::submitButton('Save', ['name' => 'submit', 'class' => 'btn btn-primary', 'value' => 'Save']) ?>
+                <div class="col-lg-12">
+                    <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Password'])->label(false) ?>
                 </div>
-                <div class="form-group">
-                    <?= Html::submitButton('Request Code', ['name' => 'submit', 'class' => 'btn btn-primary', 'value' => 'generateCode']) ?>
+                <div class="col-lg-12">
+                    <?= $form->field($model, 'confirm')->passwordInput(['placeholder' => 'Confirm Password'])->label(false) ?>
                 </div>
-            <?php ActiveForm::end(); ?>
+                <!-- <div class="row"> -->
+                <div class="col-lg-8">
+                    <?= $form->field($model, 'securitycode')->passwordInput(['placeholder' => 'Security Code'])->label(false) ?>
+                </div>
+                <div class="col-lg-4">
+                    <?= Html::submitButton('Request Code', ['name' => 'submit2', 'class' => 'btn btn-primary', 'value' => 'submit2']) ?>
+                </div>
+                <!-- </div> -->
         </div>
     </div>
+    <div class="col-lg-6">
+    <?= Html::submitButton('Save', ['name' => 'submit1', 'class' => 'btn btn-primary', 'value' => 'submit1']) ?>
+</div>
+            <?php ActiveForm::end(); ?>
 </div>

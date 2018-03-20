@@ -12,6 +12,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\forms\ResetpasswordForm;
 use app\forms\FindnameForm;
+use yii\httpclient\Client;
 
 class SiteController extends Controller
 {
@@ -35,7 +36,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['get'],
                 ],
             ],
         ];
@@ -78,13 +79,6 @@ class SiteController extends Controller
                 Yii::$app->getSession()->setFlash('success', 'Finded User');
                 $db->commit();
 
-                //send email to user
-                // $code = rand(10000,99999);
-                // Yii::$app->mailer->compose('resetpassword',['model'=> $code])
-                //     ->setFrom('kahsengpooh@gmail.com')
-                //     ->setTo($user->email)
-                //     ->setSubject('This is the validate code!')
-                //     ->send();
                 Yii::$app->cache->set('resetpassword', $user->id);
                 return $this->redirect(['resetpassword']);
             }
@@ -104,18 +98,26 @@ class SiteController extends Controller
         $model = new ResetpasswordForm();
         try {
             if ($model->load(Yii::$app->request->post())) {
-                switch (\Yii::$app->request->post()) {
-                    case '':
-                    case '':
-                }
-                $wrong = $model->reset($id);
-                if($wrong === false) {
-                    Yii::$app->getSession()->setFlash('danger', 'Wrong Sucurity Code, Please try again!!');    
-                }else {
-                    Yii::$app->getSession()->setFlash('success', 'Update Password Successfully');
-                    $db->commit();
-                }
-                return $this->redirect(['login']);
+                // if (Yii::$app->request->post('submit1')) {
+                    $wrong = $model->reset($id);
+                    if($wrong === true) {
+                        Yii::$app->getSession()->setFlash('success', 'Update Password Successfully');
+                        $db->commit();    
+                        return $this->redirect(['login']);    
+                    }
+                // }
+
+                // if (Yii::$app->request->post('submit2')) {
+                //     $code = rand(10000,99999);
+                //     Yii::$app->cache->set('code', $code);
+                //     //send sms
+                //     $client = new Client();
+                //     $response = $client->createRequest()
+                //         ->setMethod('GET')
+                //         ->setUrl('https://platform.clickatell.com/messages/http/send')
+                //         ->setData(['apiKey' => 'OUwdHQLiQfSz0EDHtqVGag==', 'to' => '60167907901', 'content' => 'Security Code is '.$code])
+                //         ->send();
+                // }
             }
         }catch(\Exception $e) {
             $db->rollback();

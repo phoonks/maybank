@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use mPDF;
 
 /**
@@ -86,11 +87,11 @@ class UserController extends Controller
                 $model->register();
 
                 //send email to user
-                   Yii::$app->mailer->compose('email',['model'=>$model])
-                    ->setFrom('kahsengpooh@gmail.com')
-                    ->setTO($model->email)
-                    ->setSubject('Welcome to Maybank!')
-                    ->send();
+                   // Yii::$app->mailer->compose('email',['model'=>$model])
+                   //  ->setFrom('kahsengpooh@gmail.com')
+                   //  ->setTO($model->email)
+                   //  ->setSubject('Welcome to Maybank!')
+                   //  ->send();
 
                 Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
                 $db->commit();
@@ -103,6 +104,35 @@ class UserController extends Controller
         return $this->render('save', [
             'model' => $model,
         ]);
+    }
+
+    public function actionUpdatePosition()
+    {
+        if (Yii::$app->user->identity->position === 'Admin') {
+            $db = Yii::$app->db->beginTransaction();
+            $model = new SignupForm();
+            $query = User::find()->all();
+            $listData = ArrayHelper::map($query, 'id', 'user_name');
+            
+            try {
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->update_position();
+
+                    Yii::$app->getSession()->setFlash('success', 'Update Successfully');
+                    $db->commit();
+                    return $this->redirect(['update-position']);
+                }
+            }catch(\Exception $e) {
+                $db->rollback();
+                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+            }
+            return $this->render('update-position', [
+                'model' => $model, 'listData' => $listData,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     public function actionSignup()

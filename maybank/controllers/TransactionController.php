@@ -101,11 +101,11 @@ class TransactionController extends Controller
                 Yii::$app->getSession()->setFlash('success', 'Transaction Submmited Successfully');
                 $db->commit();
                 //send sms
-                $response = $client->createRequest()
-                    ->setMethod('GET')
-                    ->setUrl('https://platform.clickatell.com/messages/http/send')
-                    ->setData(['apiKey' => 'OUwdHQLiQfSz0EDHtqVGag==', 'to' => '60167907901', 'content' => 'Transaction Submmited Successfully.'])
-                    ->send();
+                // $response = $client->createRequest()
+                //     ->setMethod('GET')
+                //     ->setUrl('https://platform.clickatell.com/messages/http/send')
+                //     ->setData(['apiKey' => 'OUwdHQLiQfSz0EDHtqVGag==', 'to' => '60167907901', 'content' => 'Transaction Submmited Successfully.'])
+                //     ->send();
                 return $this->redirect(['site/index']);
             }
         }catch(\Exception $e) {

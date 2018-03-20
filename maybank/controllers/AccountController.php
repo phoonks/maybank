@@ -4,10 +4,13 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Account;
+use app\models\User;
+use app\forms\SignupForm;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * AccountController implements the CRUD actions for Account model.
@@ -46,6 +49,52 @@ class AccountController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionUseraccount()
+    {
+        $id = Yii::$app->user->identity->id;
+        $account = Account::find()
+            ->where(['user_id' => $id]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $account,
+        ]);
+
+        return $this->render('useraccount', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionAccount()
+    {
+        if (Yii::$app->user->identity->position === 'Admin') {
+            $db = Yii::$app->db->beginTransaction();
+            $model = new SignupForm();
+            $model->account_number();
+            $query = User::find()->where(['status' => 'Inactivate'])->all();
+            $listData = ArrayHelper::map($query, 'id', 'user_name');
+            
+            try {
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->create_account();
+
+                    Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
+                    $db->commit();
+                    return $this->redirect(['account']);
+                }
+            }catch(\Exception $e) {
+                $db->rollback();
+                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+            }
+            return $this->render('account', [
+                'model' => $model, 'listData' => $listData,
+            ]);
+        }else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
+        
     }
 
     public function actionTestmail()

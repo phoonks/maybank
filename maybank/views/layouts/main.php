@@ -40,27 +40,22 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+            // ['label' => 'About', 'url' => ['/site/about']],
+            // ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => 'Sign Up', 'url' => ['/user/save']],
-            ['label' => 'Manage Account', 'visible' =>!Yii::$app->user->isGuest, 'items' => [
-                ['label' => 'View', 'url' => ['/account/index']],
-                ['label' => 'Transaction History', 'url' => ['/transaction/index']],
-            ]],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->user_name . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
-    ]);
+                ['label' => Yii::$app->user->identity->user_name, 'items' => [
+                ['label' => 'View Account', 'url' => ['/account/index'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
+                ['label' => 'Change User Position', 'url' => ['/user/update-position'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
+                ['label' => 'View Account', 'url' => ['/account/useraccount'], 'visible' => Yii::$app->user->identity->position === 'User'],
+                ['label' => 'Activate User', 'url' => ['/account/account'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
+                ['label' => 'Transaction History', 'url' => ['/transaction/index']],
+                '<li class="divider"></li>',
+                ['label' => 'Logout', 'url' => ['/site/logout'], 'template' => '<a href="{url}" data-method=post>{label}</a>'],
+        ]]
+    )]]);
     NavBar::end();
     ?>
 

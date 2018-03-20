@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\base\NotSupportedException;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
@@ -31,7 +33,7 @@ use Yii;
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
-    public $auth_key;
+    public $authKey;
     /**
      * @inheritdoc
      */
@@ -118,17 +120,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     /**
      * {@inheritdoc}
      */
+
     public function getAuthKey()
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return $this->authKey;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateAuthKey($authKey)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return $this->getAuthKey() === $authKey;
     }
 
     /**
