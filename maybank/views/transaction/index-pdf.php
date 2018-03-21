@@ -26,7 +26,7 @@ $title = 'Transactions History';
             'status',
             'details',
             //'remark',
-            //'created_at',
+            'created_at',
             //'updated_at',
             //'is_deleted',
 

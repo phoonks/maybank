@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Account;
+use app\models\AccountSearch;
 use app\models\User;
 use app\forms\SignupForm;
 use yii\data\ActiveDataProvider;
@@ -42,12 +43,13 @@ class AccountController extends Controller
         $account = Account::find()
             ->where(['user_id' => $id]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $account,
-        ]);
+        $searchModel = new AccountSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams)
+;
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
@@ -144,10 +146,21 @@ class AccountController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Account();
+        $model = new SignupForm();
+        $model->account_number();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $db = Yii::$app->db->beginTransaction();
+        try {
+            if ($model->load(Yii::$app->request->post())) {
+                $model->add_account();
+                Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
+                $db->commit();
+                return $this->redirect(['create']);
+            }
+    
+        }catch(\Exception $e) {
+                $db->rollback();
+                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
         }
 
         return $this->render('create', [

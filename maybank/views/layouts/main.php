@@ -51,7 +51,7 @@ AppAsset::register($this);
                 ['label' => 'Change User Position', 'url' => ['/user/update-position'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
                 ['label' => 'View Account', 'url' => ['/account/useraccount'], 'visible' => Yii::$app->user->identity->position === 'User'],
                 ['label' => 'Activate User', 'url' => ['/account/account'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
-                ['label' => 'Transaction History', 'url' => ['/transaction/index']],
+                ['label' => 'Transaction History', 'url' => ['/transaction/index-user'], 'visible' => Yii::$app->user->identity->position === 'User'],
                 '<li class="divider"></li>',
                 ['label' => 'Logout', 'url' => ['/site/logout'], 'template' => '<a href="{url}" data-method=post>{label}</a>'],
         ]]

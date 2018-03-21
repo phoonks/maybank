@@ -52,6 +52,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['postcode'], 'integer'],
             [['identity_card', 'user_name', 'password', 'first_name', 'last_name', 'name', 'country_code', 'phone_no', 'email', 'position', 'address', 'country', 'city', 'state'], 'string', 'max' => 255],
             [['is_deleted'], 'boolean'],
+            [['user_name'], 'unique', 'targetClass' => '\app\models\User', 'targetAttribute' => 'user_name'],
+            [['identity_card'], 'unique', 'targetClass' => '\app\models\User', 'targetAttribute' => 'identity_card'],
         ];
     }
 

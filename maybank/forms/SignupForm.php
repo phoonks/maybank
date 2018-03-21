@@ -12,6 +12,7 @@ use app\models\Account;
  */
 class SignupForm extends Model
 {
+    public $id;
     public $identity_card;
     public $user_name;
     public $password;
@@ -34,14 +35,15 @@ class SignupForm extends Model
     public $current_balance;
     public $account_type;
     public $status;
+    public $date;
 
     public function rules()
     {
         return [
             [['identity_card', 'account_number'], 'required'],
-            [['account_number'], 'unique'],
-            [['user_name'], 'unique'],
-            [['identity_card'], 'unique'],
+            [['account_number'], 'unique', 'targetClass' => '\app\models\Account', 'targetAttribute' => 'account_number'],
+            [['user_name'], 'unique', 'targetClass' => '\app\models\User', 'targetAttribute' => 'user_name'],
+            [['identity_card'], 'unique', 'targetClass' => '\app\models\User', 'targetAttribute' => 'identity_card'],
             ['email', 'email'],
             ['current_balance', 'number', 'min' => 0],
             [['user_id', 'available_balance', 'current_balance'], 'integer'],
@@ -52,7 +54,13 @@ class SignupForm extends Model
     public function register()
     {
         $user = new User;
-
+        $this->date = date('Y-m-d');
+        // if($this->date_of_birth !== 'Y-m-d') {
+        //     throw new \Exception('Please enter correct date!');
+        // }
+        // if($this->date_of_birth < date('Y-m-d H:i:s')) {
+        //     throw new \Exception('Date cannot more than today!');
+        // }
         $user->identity_card = $this->identity_card;
         $user->user_name = $this->user_name;
         $user->password = crypt($this->password, 'PhoonKahSeng');
@@ -93,6 +101,23 @@ class SignupForm extends Model
         $account->is_deleted = 0;
 
         $this->update_status($this->user_name);
+        if(!$account->save()) {
+            throw new \Exception(current($account->getFirstErrors()));
+        }
+    }
+
+    public function add_account() {
+        $account = new Account;
+
+        $account->user_id = $this->user_id;
+        $account->account_number = $this->account_number;
+        $account->current_balance = $this->current_balance;
+        $account->account_type = $this->account_type;
+        $account->available_balance = ($this->current_balance)-20;
+        $account->created_at = date('Y-m-d H:i:s');
+        $account->updated_at = date('Y-m-d H:i:s');
+        $account->is_deleted = 0;
+
         if(!$account->save()) {
             throw new \Exception(current($account->getFirstErrors()));
         }

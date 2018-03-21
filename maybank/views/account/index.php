@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -15,6 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Account', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+    <p>
+        <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     </p>
 
     <?= GridView::widget([
@@ -32,7 +36,17 @@ $this->params['breadcrumbs'][] = $this->title;
             //'updated_at',
             //'is_deleted',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn', 
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a(
+                            '<span class="glyphicon glyphicon-user"></span>',
+                            Url::to('maybank/maybank/web/transaction/index?id='.$model->user_id, true)
+                            );
+                    }
+                ],],
         ],
     ]); ?>
 </div>

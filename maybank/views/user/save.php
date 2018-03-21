@@ -214,11 +214,12 @@ use yii\widgets\ActiveForm;
                     'clientOptions' =>
                     [
                         'showAnim' => 'drop',
-                        'yearRange' => '1900:2009',
+                        'yearRange' => '1900:2109',
+                        'maxDate' => 0,
                         'changeMonth' => true,
                         'changeYear' => true,
                     ]
-                    ])->label('Date of Birth') ?>
+                    ])->textInput(['readonly' => true]) ?>
             </div>
             <div>
                 <span class="pull-left">

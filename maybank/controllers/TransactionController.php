@@ -35,18 +35,35 @@ class TransactionController extends Controller
      * Lists all Transaction models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
-        $id = Yii::$app->user->identity->id;
-        $transaction = Transaction::find()
-            ->where(['user_id' => $id]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $transaction,
-        ]);
+        if (Yii::$app->user->identity->position === 'Admin') {
+            $transaction = Transaction::find()
+                ->where(['user_id' => $id]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $transaction,
+            ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        } 
+    }
+
+    public function actionIndexUser()
+    { 
+        if (Yii::$app->user->identity->position === 'User') {
+            $userid = Yii::$app->user->identity->id;
+            $transaction = Transaction::find()
+                ->where(['user_id' => $userid]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $transaction,
+            ]);
+
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 
     public function actionGenPdf()

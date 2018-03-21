@@ -41,6 +41,7 @@ class Account extends \yii\db\ActiveRecord
             [['available_balance', 'current_balance'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['account_number', 'account_type'], 'string', 'max' => 255],
+            [['account_number'], 'unique', 'targetClass' => '\app\models\Account', 'targetAttribute' => 'account_number'],
             [['is_deleted'], 'boolean'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];

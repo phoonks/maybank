@@ -13,9 +13,15 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'user_id')
-        ->textInput(['readonly' => true, 'value' => Yii::$app->user->identity->id]) ?>
+        ->textInput() ?>
 
-    <?= $form->field($model, 'account_number')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'account_number')->textInput(['value' => $model->account_number,
+                    'readonly' => true]) ?>
+                    
+    <?= $form->field($model, 'account_type')->dropDownList([
+                    'Fixed Account' => 'Fixed Account', 
+                    'Saving Account' => 'Saving Account']) 
+                    ->hint("Select Your Account Type") ?>
 
     <?= $form->field($model, 'current_balance')->textInput() ?>
 
