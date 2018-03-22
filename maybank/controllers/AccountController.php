@@ -40,12 +40,9 @@ class AccountController extends Controller
     public function actionIndex()
     {
         $id = Yii::$app->user->identity->id;
-        $account = Account::find()
-            ->where(['user_id' => $id]);
 
         $searchModel = new AccountSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams)
-;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -64,6 +61,20 @@ class AccountController extends Controller
         ]);
 
         return $this->render('useraccount', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionViewaccount($id)
+    {
+        $account = Account::find()
+            ->where(['user_id' => $id]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $account,
+        ]);
+
+        return $this->render('viewaccount', [
             'dataProvider' => $dataProvider,
         ]);
     }

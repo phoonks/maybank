@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
 	    <?= $form->field($model, 'id')->textInput(['placeholder' => 'Enter ID']) ?>
     </div>
 	<div class = "col-lg-2">
-	    <?= $form->field($model, 'user_id')->textInput(['placeholder' => 'Enter User ID']) ?>
+	    <?= $form->field($model, 'user_id')->textInput(['placeholder' => 'Enter User Name']) ?>
 	</div>
 	<div class = "col-lg-2">
 	    <?= $form->field($model, 'account_number')->textInput(['placeholder' => 'Enter Account Number']) ?>

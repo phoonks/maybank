@@ -37,9 +37,8 @@ class Account extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id'], 'integer'],
             [['available_balance', 'current_balance'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'user_id'], 'safe'],
             [['account_number', 'account_type'], 'string', 'max' => 255],
             [['account_number'], 'unique', 'targetClass' => '\app\models\Account', 'targetAttribute' => 'account_number'],
             [['is_deleted'], 'boolean'],
@@ -60,7 +59,7 @@ class Account extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
+            'user_id' => 'User Name',
             'account_number' => 'Account Number',
             'available_balance' => 'Available Balance',
             'current_balance' => 'Current Balance',

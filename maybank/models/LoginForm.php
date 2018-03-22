@@ -50,6 +50,9 @@ class LoginForm extends Model
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
+            if ($user->status === 'Inactivate') {
+                $this->addError($attribute, 'User Inactivate.');
+            }
         }
     }
 

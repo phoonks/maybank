@@ -91,6 +91,30 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionChangePassword()
+    {
+        $id = Yii::$app->cache->get('resetpassword');
+        $db = Yii::$app->db->beginTransaction();
+        $model = new ResetpasswordForm();
+        try {
+            if ($model->load(Yii::$app->request->post())) {
+                // if (Yii::$app->request->post('submit1')) {
+                    $wrong = $model->changepassword($id);
+                    if($wrong === true) {
+                        Yii::$app->getSession()->setFlash('success', 'Update Password Successfully');
+                        $db->commit();    
+                        return $this->redirect(['login']);    
+                    }
+            }
+        }catch(\Exception $e) {
+            $db->rollback();
+            Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+        }
+        return $this->render('change-password', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionResetpassword()
     {
         $id = Yii::$app->cache->get('resetpassword');

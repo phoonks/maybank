@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Account;
+use app\models\User;
 
 /**
  * AccountholderSearch represents the model behind the search form of `app\models\Accountholder`.
  */
-class AccountSearch extends Account
+class UserSearch extends User
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class AccountSearch extends Account
     {
         return [
             [['id'], 'integer'],
-            [['user_id', 'account_number', 'account_type'], 'safe'],
+            [['identity_card', 'user_name', 'status', 'name', 'email', 'position'], 'safe'],
         ];
     }
 
@@ -33,7 +33,7 @@ class AccountSearch extends Account
 
     public function search($params)
     {
-        $query = Account::find();
+        $query = User::find();
 
         // add conditions that should always apply here
         $this->load($params);
@@ -41,18 +41,17 @@ class AccountSearch extends Account
         if (!$this->validate()) {
             return $dataProvider;
         }
-        $query->joinWith('user');
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            // 'user_id' => $this->user_id,
-            'account.is_deleted' => 0,
+            'status' => $this->status,
         ]);
 
         //for search similer data
-        $query->andFilterWhere(['like', 'account_number', $this->account_number])
-            ->andFilterWhere(['like', 'account_type', $this->account_type])
-            ->andFilterWhere(['like', 'user.user_name', $this->user_id]);
+        $query->andFilterWhere(['like', 'identity_card', $this->identity_card])
+            ->andFilterWhere(['like', 'user_name', $this->user_name])
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'position', $this->position]);
             
          return new ActiveDataProvider([
             'query' => $query,

@@ -14,11 +14,12 @@ class ResetpasswordForm extends Model
     public $password;
     public $confirm;
     public $securitycode;
+    public $oldpassword;
 
     public function rules()
     {
         return [
-            [['password', 'confirm'], 'required'],
+            [['password', 'confirm', 'oldpassword'], 'required'],
             [['securitycode'], 'integer'],
             ['confirm', 'compare', 'compareAttribute' => 'password', 'operator' => '<='],
         ];
@@ -36,6 +37,23 @@ class ResetpasswordForm extends Model
             throw new \Exception(current($user->getFirstErrors()));
         }
         return true;
+
+    }
+
+    public function changepassword()
+    {
+        $user = User::findOne(Yii::$app->user->identity->id);
+        
+        if($user->password === crypt($this->oldpassword, 'PhoonKahSeng')) {
+            $user->password = crypt($this->password, 'PhoonKahSeng');
+            if(!$user->update(false, ['password'])) {
+                throw new \Exception(current($user->getFirstErrors()));
+            }
+            return true;
+        }else {
+            // throw new \Exception('Old Password is incorrect cannot change password!!');
+            throw new \Exception($user->password);
+        }
 
     }
 }

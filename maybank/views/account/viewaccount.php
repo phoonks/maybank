@@ -38,12 +38,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'view' => function ($url, $model) {
                         return Html::a(
                             '<span class="glyphicon glyphicon-user"></span>',
-                            Url::to('maybank/maybank/web/account/view?id=' . $model->id, true)
+                            Url::to('maybank/maybank/web/transaction/index?id='.$model->user_id, true)
                             );
                     }
                 ],
-
             ],
         ],
     ]); ?>
 </div>
+  

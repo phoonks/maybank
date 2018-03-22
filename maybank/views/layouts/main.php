@@ -40,18 +40,21 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
+                ['label' => 'Sign Up', 'url' => ['/user/save'], 'visible' => Yii::$app->user->isGuest],
             // ['label' => 'About', 'url' => ['/site/about']],
             // ['label' => 'Contact', 'url' => ['/site/contact']],
-            ['label' => 'Sign Up', 'url' => ['/user/save']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
                 ['label' => Yii::$app->user->identity->user_name, 'items' => [
                 ['label' => 'View Account', 'url' => ['/account/index'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
-                ['label' => 'Change User Position', 'url' => ['/user/update-position'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
+                ['label' => 'View User', 'url' => ['/user/index'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
+                // ['label' => 'Make Transaction', 'url' => ['/account/useraccount'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
+                // ['label' => 'Change User Position', 'url' => ['/user/update-position'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
                 ['label' => 'View Account', 'url' => ['/account/useraccount'], 'visible' => Yii::$app->user->identity->position === 'User'],
                 ['label' => 'Activate User', 'url' => ['/account/account'], 'visible' => Yii::$app->user->identity->position === 'Admin'],
                 ['label' => 'Transaction History', 'url' => ['/transaction/index-user'], 'visible' => Yii::$app->user->identity->position === 'User'],
+                ['label' => 'Change Password', 'url' => ['/site/change-password']],
                 '<li class="divider"></li>',
                 ['label' => 'Logout', 'url' => ['/site/logout'], 'template' => '<a href="{url}" data-method=post>{label}</a>'],
         ]]
