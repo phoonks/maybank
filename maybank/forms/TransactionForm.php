@@ -34,7 +34,7 @@ class TransactionForm extends Model
             [['amount', 'last_balance'], 'double'],
             [['name', 'status', 'details', 'remark', 'available_balance'], 'safe'],
             ['to_account', 'compare', 'compareAttribute' => 'from_account', 'operator' => '!='],
-            ['amount', 'number', 'min' => 0],
+            ['amount', 'number', 'min' => 1],
             ['amount', 'number', 'max' => $this->available_balance],
             // ['amount', 'compare', 'compareAttribute' => 'available_balance', 'operator' => '<'],
         ];
