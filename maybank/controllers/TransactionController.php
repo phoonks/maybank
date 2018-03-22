@@ -37,52 +37,67 @@ class TransactionController extends Controller
      */
     public function actionIndex($id)
     {
-        if (Yii::$app->user->identity->position === 'Admin') {
+        if (!Yii::$app->user->isGuest){
+            if (Yii::$app->user->identity->position === 'Admin') {
+                $transaction = Transaction::find()
+                    ->where(['user_id' => $id]);
+                $dataProvider = new ActiveDataProvider([
+                    'query' => $transaction,
+                ]);
+
+                return $this->render('index', [
+                    'dataProvider' => $dataProvider,
+                ]);
+            } 
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
+    }
+
+    public function actionIndexUser()
+    { 
+        if (!Yii::$app->user->isGuest){
+            if (Yii::$app->user->identity->position === 'User') {
+                $userid = Yii::$app->user->identity->id;
+                $transaction = Transaction::find()
+                    ->where(['user_id' => $userid]);
+                $dataProvider = new ActiveDataProvider([
+                    'query' => $transaction,
+                ]);
+
+                return $this->render('index', [
+                    'dataProvider' => $dataProvider,
+                ]);
+            }
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
+    }
+
+    public function actionGenPdf()
+    {
+        if (!Yii::$app->user->isGuest){
+            $id = Yii::$app->user->identity->id;
             $transaction = Transaction::find()
                 ->where(['user_id' => $id]);
             $dataProvider = new ActiveDataProvider([
                 'query' => $transaction,
             ]);
 
-            return $this->render('index', [
+            $pdf_content = $this->render('index-pdf', [
                 'dataProvider' => $dataProvider,
             ]);
-        } 
-    }
 
-    public function actionIndexUser()
-    { 
-        if (Yii::$app->user->identity->position === 'User') {
-            $userid = Yii::$app->user->identity->id;
-            $transaction = Transaction::find()
-                ->where(['user_id' => $userid]);
-            $dataProvider = new ActiveDataProvider([
-                'query' => $transaction,
-            ]);
-
-            return $this->render('index', [
-                'dataProvider' => $dataProvider,
-            ]);
+            $mpdf = new \Mpdf\Mpdf();
+            $mpdf->WriteHTML($pdf_content);
+            $mpdf->Output();
+            exit;
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
         }
-    }
-
-    public function actionGenPdf()
-    {
-        $id = Yii::$app->user->identity->id;
-        $transaction = Transaction::find()
-            ->where(['user_id' => $id]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $transaction,
-        ]);
-
-        $pdf_content = $this->render('index-pdf', [
-            'dataProvider' => $dataProvider,
-        ]);
-
-        $mpdf = new \Mpdf\Mpdf();
-        $mpdf->WriteHTML($pdf_content);
-        $mpdf->Output();
-        exit;
     }
 
     /**
@@ -93,9 +108,14 @@ class TransactionController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if (!Yii::$app->user->isGuest){
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     /**
@@ -105,57 +125,67 @@ class TransactionController extends Controller
      */
     public function actionCreate($id)
     {
-        $db = Yii::$app->db->beginTransaction();
-        $client = new Client();
-        $model = new TransactionForm();
-        $model->getAccount($id);
-        $model->getBalance($id);
-        
-        try {
-            if ($model->load(Yii::$app->request->post())) {
-                $model->transaction();
+        if (!Yii::$app->user->isGuest){
+            $db = Yii::$app->db->beginTransaction();
+            $client = new Client();
+            $model = new TransactionForm();
+            $model->getAccount($id);
+            $model->getBalance($id);
+            
+            try {
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->transaction();
 
-                Yii::$app->getSession()->setFlash('success', 'Transaction Submmited Successfully');
-                $db->commit();
-                //send sms
-                // $response = $client->createRequest()
-                //     ->setMethod('GET')
-                //     ->setUrl('https://platform.clickatell.com/messages/http/send')
-                //     ->setData(['apiKey' => 'OUwdHQLiQfSz0EDHtqVGag==', 'to' => '60167907901', 'content' => 'Transaction Submmited Successfully.'])
-                //     ->send();
-                return $this->redirect(['site/index']);
+                    Yii::$app->getSession()->setFlash('success', 'Transaction Submmited Successfully');
+                    $db->commit();
+                    //send sms
+                    // $response = $client->createRequest()
+                    //     ->setMethod('GET')
+                    //     ->setUrl('https://platform.clickatell.com/messages/http/send')
+                    //     ->setData(['apiKey' => 'OUwdHQLiQfSz0EDHtqVGag==', 'to' => '60167907901', 'content' => 'Transaction Submmited Successfully.'])
+                    //     ->send();
+                    return $this->redirect(['site/index']);
+                }
+            }catch(\Exception $e) {
+                $db->rollback();
+                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
             }
-        }catch(\Exception $e) {
-            $db->rollback();
-            Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
         }
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     public function actionSave($id)
     {
-        $db = Yii::$app->db->beginTransaction();
-        $model = new TransactionForm();
-        $model->getAccount($id);
-        $model->getBalance($id);
-        
-        try {
-            if ($model->load(Yii::$app->request->post())) {
-                $model->transaction();
+        if (!Yii::$app->user->isGuest){
+            $db = Yii::$app->db->beginTransaction();
+            $model = new TransactionForm();
+            $model->getAccount($id);
+            $model->getBalance($id);
+            
+            try {
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->transaction();
 
-                Yii::$app->getSession()->setFlash('success', 'Transaction Submmited Successfully');
-                $db->commit();
-                return $this->redirect(['save']);
+                    Yii::$app->getSession()->setFlash('success', 'Transaction Submmited Successfully');
+                    $db->commit();
+                    return $this->redirect(['save']);
+                }
+            }catch(\Exception $e) {
+                $db->rollback();
+                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
             }
-        }catch(\Exception $e) {
-            $db->rollback();
-            Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+            return $this->render('save', [
+                'model' => $model,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
         }
-        return $this->render('save', [
-            'model' => $model,
-        ]);
     }
 
     /**

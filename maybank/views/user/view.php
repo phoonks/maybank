@@ -53,9 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'state',
             'postcode',
             'last_logging_time',
-            'created_at',
-            'updated_at',
-            'is_deleted',
+            //'created_at',
+            //'updated_at',
+            //'is_deleted',
         ],
     ]) ?>
 

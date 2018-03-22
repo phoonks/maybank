@@ -39,73 +39,94 @@ class AccountController extends Controller
      */
     public function actionIndex()
     {
-        $id = Yii::$app->user->identity->id;
+        if (!Yii::$app->user->isGuest){
+            $id = Yii::$app->user->identity->id;
 
-        $searchModel = new AccountSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $searchModel = new AccountSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-        ]);
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     public function actionUseraccount()
     {
-        $id = Yii::$app->user->identity->id;
-        $account = Account::find()
-            ->where(['user_id' => $id]);
+        if (!Yii::$app->user->isGuest){
+            $id = Yii::$app->user->identity->id;
+            $account = Account::find()
+                ->where(['user_id' => $id]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $account,
-        ]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $account,
+            ]);
 
-        return $this->render('useraccount', [
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('useraccount', [
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     public function actionViewaccount($id)
     {
-        $account = Account::find()
-            ->where(['user_id' => $id]);
+        if (!Yii::$app->user->isGuest){
+            $account = Account::find()
+                ->where(['user_id' => $id]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $account,
-        ]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $account,
+            ]);
 
-        return $this->render('viewaccount', [
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('viewaccount', [
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     public function actionAccount()
     {
-        if (Yii::$app->user->identity->position === 'Admin') {
-            $db = Yii::$app->db->beginTransaction();
-            $model = new SignupForm();
-            $model->account_number();
-            $query = User::find()->where(['status' => 'Inactivate'])->all();
-            $listData = ArrayHelper::map($query, 'id', 'user_name');
-            
-            try {
-                if ($model->load(Yii::$app->request->post())) {
-                    $model->create_account();
+        if (!Yii::$app->user->isGuest){
 
-                    Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
-                    $db->commit();
-                    return $this->redirect(['account']);
+            if (Yii::$app->user->identity->position === 'Admin') {
+                $db = Yii::$app->db->beginTransaction();
+                $model = new SignupForm();
+                $model->account_number();
+                $query = User::find()->where(['status' => 'Inactivate'])->all();
+                $listData = ArrayHelper::map($query, 'id', 'user_name');
+                
+                try {
+                    if ($model->load(Yii::$app->request->post())) {
+                        $model->create_account();
+
+                        Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
+                        $db->commit();
+                        return $this->redirect(['account']);
+                    }
+                }catch(\Exception $e) {
+                    $db->rollback();
+                    Yii::$app->getSession()->setFlash('danger', $e->getMessage());
                 }
-            }catch(\Exception $e) {
-                $db->rollback();
-                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+                return $this->render('account', [
+                    'model' => $model, 'listData' => $listData,
+                ]);
+            }else {
+                Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+                return $this->goHome();
             }
-            return $this->render('account', [
-                'model' => $model, 'listData' => $listData,
-            ]);
         }else {
             Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
-            return $this->goHome();
+                return $this->goHome();
         }
         
     }
@@ -145,9 +166,14 @@ class AccountController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if (!Yii::$app->user->isGuest){
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     /**
@@ -157,26 +183,31 @@ class AccountController extends Controller
      */
     public function actionCreate()
     {
-        $model = new SignupForm();
-        $model->account_number();
+        if (!Yii::$app->user->isGuest){
+            $model = new SignupForm();
+            $model->account_number();
 
-        $db = Yii::$app->db->beginTransaction();
-        try {
-            if ($model->load(Yii::$app->request->post())) {
-                $model->add_account();
-                Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
-                $db->commit();
-                return $this->redirect(['create']);
+            $db = Yii::$app->db->beginTransaction();
+            try {
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->add_account();
+                    Yii::$app->getSession()->setFlash('success', 'Create Account Holder Submmited Successfully');
+                    $db->commit();
+                    return $this->redirect(['create']);
+                }
+        
+            }catch(\Exception $e) {
+                    $db->rollback();
+                    Yii::$app->getSession()->setFlash('danger', $e->getMessage());
             }
-    
-        }catch(\Exception $e) {
-                $db->rollback();
-                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
-        }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     /**
@@ -188,15 +219,20 @@ class AccountController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        if (!Yii::$app->user->isGuest){
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -208,9 +244,13 @@ class AccountController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        if (!Yii::$app->user->isGuest){
+            $this->findModel($id)->delete();
+            return $this->redirect(['index']);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     /**

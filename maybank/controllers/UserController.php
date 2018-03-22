@@ -39,13 +39,18 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new UserSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (!Yii::$app->user->isGuest){
+            $searchModel = new UserSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-        ]);
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     /**
@@ -56,21 +61,31 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if (!Yii::$app->user->isGuest){
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     public function actionGenPdf($id)
     {
-        $pdf_content = $this->render('view-pdf', [
-            'model' => $this->findModel($id),
-        ]);
+        if (!Yii::$app->user->isGuest){
+            $pdf_content = $this->render('view-pdf', [
+                'model' => $this->findModel($id),
+            ]);
 
-        $mpdf = new \Mpdf\Mpdf();
-        $mpdf->WriteHTML($pdf_content);
-        $mpdf->Output();
-        exit;
+            $mpdf = new \Mpdf\Mpdf();
+            $mpdf->WriteHTML($pdf_content);
+            $mpdf->Output();
+            exit;
+        } else {
+            Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+            return $this->goHome();
+        }
     }
 
     /**
@@ -109,27 +124,32 @@ class UserController extends Controller
 
     public function actionUpdatePosition()
     {
-        if (Yii::$app->user->identity->position === 'Admin') {
-            $db = Yii::$app->db->beginTransaction();
-            $model = new SignupForm();
-            $query = User::find()->all();
-            $listData = ArrayHelper::map($query, 'id', 'user_name');
-            
-            try {
-                if ($model->load(Yii::$app->request->post())) {
-                    $model->update_position();
+        if (!Yii::$app->user->isGuest){
+            if (Yii::$app->user->identity->position === 'Admin') {
+                $db = Yii::$app->db->beginTransaction();
+                $model = new SignupForm();
+                $query = User::find()->all();
+                $listData = ArrayHelper::map($query, 'id', 'user_name');
+                
+                try {
+                    if ($model->load(Yii::$app->request->post())) {
+                        $model->update_position();
 
-                    Yii::$app->getSession()->setFlash('success', 'Update Successfully');
-                    $db->commit();
-                    return $this->redirect(['update-position']);
+                        Yii::$app->getSession()->setFlash('success', 'Update Successfully');
+                        $db->commit();
+                        return $this->redirect(['update-position']);
+                    }
+                }catch(\Exception $e) {
+                    $db->rollback();
+                    Yii::$app->getSession()->setFlash('danger', $e->getMessage());
                 }
-            }catch(\Exception $e) {
-                $db->rollback();
-                Yii::$app->getSession()->setFlash('danger', $e->getMessage());
+                return $this->render('update-position', [
+                    'model' => $model, 'listData' => $listData,
+                ]);
+            } else {
+                Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
+                return $this->goHome();
             }
-            return $this->render('update-position', [
-                'model' => $model, 'listData' => $listData,
-            ]);
         } else {
             Yii::$app->getSession()->setFlash('danger', 'You do not have permission to access this page.');
             return $this->goHome();
