@@ -26,9 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'account_number',
             'available_balance',
             'current_balance',
-            'created_at',
-            'updated_at',
-            'is_deleted',
+            //'created_at',
+            //'updated_at',
+            //'is_deleted',
         ],
     ]) ?>
 
