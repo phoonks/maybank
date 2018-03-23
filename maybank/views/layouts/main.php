@@ -45,6 +45,7 @@ AppAsset::register($this);
             // ['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
+                ['label' => 'Signup1', 'url' => ['/user/signup1']]
             ) : (
                 ['label' => Yii::$app->user->identity->user_name, 'items' => [
                 ['label' => 'View Account', 'url' => ['/account/index'], 'visible' => Yii::$app->user->identity->position === 'Admin'],

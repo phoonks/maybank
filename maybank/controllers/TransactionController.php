@@ -90,7 +90,7 @@ class TransactionController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
 
-            $mpdf = new \Mpdf\Mpdf();
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => 'maybankks\maybank\vendor\mpdf\mpdf\tmp']);
             $mpdf->WriteHTML($pdf_content);
             $mpdf->Output();
             exit;

@@ -78,6 +78,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'address' => 'Address',
             'country' => 'Country',
             'city' => 'City',
+            'status' => 'status',
             'state' => 'State',
             'postcode' => 'Postcode',
             'last_logging_time' => 'Last Logging Time',
